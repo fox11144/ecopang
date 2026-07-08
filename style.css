@@ -69,6 +69,116 @@ body {
     padding: 0 24px;
 }
 
+/* Page Loader styling */
+.page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.page-loader.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.loader-logo-container {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader-logo {
+    width: 70px;
+    height: auto;
+    object-fit: contain;
+    z-index: 10;
+    animation: loader-pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes loader-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.08); opacity: 1; }
+}
+
+.loader-ring {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    border: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: loader-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: var(--primary) transparent transparent transparent;
+}
+
+.loader-ring div:nth-child(1) { animation-delay: -0.45s; }
+.loader-ring div:nth-child(2) { animation-delay: -0.3s; }
+.loader-ring div:nth-child(3) { animation-delay: -0.15s; }
+
+@keyframes loader-ring {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loader-text {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+}
+
+/* Page Content display */
+.page-content {
+    display: none;
+    opacity: 0;
+}
+
+.page-content.active-page {
+    display: block;
+    animation: pageFadeIn 0.6s forwards cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Typography & Badges */
 h1, h2, h3, h4 {
     font-weight: 700;

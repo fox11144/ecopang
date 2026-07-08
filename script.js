@@ -4,12 +4,95 @@ document.addEventListener("DOMContentLoaded", () => {
         lucide.createIcons();
     }
 
-    // 2. Mobile Drawer Navigation
+    // 2. SPA Page Navigation with Loading Animation
+    const pageLoader = document.getElementById("pageLoader");
+    const pageSections = document.querySelectorAll(".page-content");
+    const pageNavLinks = document.querySelectorAll(".page-nav-link");
+
+    // Mapping link hashes to page section IDs
+    const pageMap = {
+        "#about": "about-page",
+        "#persona": "persona-page",
+        "#scamper": "scamper-page",
+        "#gallery": "gallery-page",
+        "#calculator": "calculator-page"
+    };
+
+    function switchPage(targetHash) {
+        const targetPageId = pageMap[targetHash] || "about-page";
+        const targetPage = document.getElementById(targetPageId);
+
+        if (!targetPage) return;
+
+        // Show page loader (fade in)
+        pageLoader.classList.add("active");
+
+        // Simulate loading time (400ms) for screen transition
+        setTimeout(() => {
+            // Hide all pages
+            pageSections.forEach(page => {
+                page.classList.remove("active-page");
+            });
+
+            // Show target page
+            targetPage.classList.add("active-page");
+
+            // Scroll to the top of the page instantly
+            window.scrollTo(0, 0);
+
+            // Update navigation link active states
+            updateNavActiveStates(targetHash);
+
+            // Hide page loader (fade out)
+            pageLoader.classList.remove("active");
+        }, 400);
+    }
+
+    function updateNavActiveStates(currentHash) {
+        // Reset all links
+        pageNavLinks.forEach(link => {
+            link.classList.remove("active");
+            // If the link has the matching hash, make it active
+            if (link.getAttribute("href") === currentHash) {
+                link.classList.add("active");
+            }
+        });
+    }
+
+    // Attach click events to all page navigation links
+    pageNavLinks.forEach(link => {
+        link.addEventListener("click", (e) => {
+            const href = link.getAttribute("href");
+            if (href && href.startsWith("#")) {
+                e.preventDefault();
+                // Push hash to history without scrolling
+                history.pushState(null, null, href);
+                switchPage(href);
+            }
+        });
+    });
+
+    // Handle back/forward browser buttons
+    window.addEventListener("popstate", () => {
+        const hash = window.location.hash || "#about";
+        switchPage(hash);
+    });
+
+    // Initial page load routing based on URL Hash
+    const initialHash = window.location.hash || "#about";
+    if (initialHash && pageMap[initialHash]) {
+        // Direct display on initial load, no delay needed
+        pageSections.forEach(page => page.classList.remove("active-page"));
+        document.getElementById(pageMap[initialHash]).classList.add("active-page");
+        updateNavActiveStates(initialHash);
+    }
+
+    // 3. Mobile Drawer Navigation
     const mobileNavToggle = document.getElementById("mobileNavToggle");
     const drawerClose = document.getElementById("drawerClose");
     const mobileDrawer = document.getElementById("mobileDrawer");
     const drawerOverlay = document.getElementById("drawerOverlay");
-    const drawerLinks = document.querySelectorAll(".drawer-link");
+    const drawerLinks = document.querySelectorAll(".mobile-drawer .page-nav-link");
 
     function openDrawer() {
         mobileDrawer.classList.add("open");
@@ -28,10 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (drawerOverlay) drawerOverlay.addEventListener("click", closeDrawer);
     drawerLinks.forEach(link => link.addEventListener("click", closeDrawer));
 
-    // 3. Theme Toggle (Light / Dark Mode)
+    // 4. Theme Toggle (Light / Dark Mode)
     const themeToggleBtn = document.getElementById("themeToggleBtn");
     const body = document.body;
-    const navLogo = document.getElementById("navLogo");
 
     // Local storage key for theme
     const savedTheme = localStorage.getItem("eco-theme") || "light";
@@ -60,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 4. SCAMPER Tab Navigation
+    // 5. SCAMPER Tab Navigation
     const scamperTabs = document.querySelectorAll(".scamper-tab");
     const scamperPanels = document.querySelectorAll(".scamper-panel");
 
@@ -83,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 5. Materials Gallery Lightbox
+    // 6. Materials Gallery Lightbox
     const galleryCards = document.querySelectorAll(".gallery-card");
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightboxImg");
@@ -153,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === "ArrowRight") nextImage();
     });
 
-    // 6. Interactive Eco Calculator
+    // 7. Interactive Eco Calculator
     const weeklyDeliverySlider = document.getElementById("weeklyDelivery");
     const deliveryValDisplay = document.getElementById("deliveryVal");
     const boxSizeSelect = document.getElementById("boxSize");
